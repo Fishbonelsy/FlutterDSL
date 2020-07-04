@@ -58,15 +58,16 @@ class Attr {
 }
 
 class TextNode extends TemplateNode {
-
   @override
   Widget internalBuild() {
     Widget child = Text(
       text,
+      maxLines: maxLines,
       style: TextStyle(
         fontSize: textSize,
         color: color,
         decoration: TextDecoration.none,
+        fontWeight: fontWeight,
       ),
     );
     return child;
@@ -77,7 +78,21 @@ class TextNode extends TemplateNode {
   double get textSize =>
       getAttr('textSize') != null ? double.parse(getAttr('textSize')) : 14.0;
 
-  Color get color => getAttr('color') != null
-      ? Color(int.parse(getAttr('color')))
-      : Colors.black;
+  int get maxLines =>
+      getAttr('maxLines') != null ? int.parse(getAttr('maxLines')) : null;
+
+  Color get color {
+    final attrStr = getAttr('textColor') ?? '#FFFFFF';
+    final prefix = attrStr.length == 7 ? '0xFF' : '0x';
+    final colorStr = prefix + attrStr.substring(1, attrStr.length);
+    return Color(int.parse(colorStr));
+  }
+
+  FontWeight get fontWeight {
+    if (getAttr('textStyle') != null && getAttr('textStyle') == 'bold') {
+      return FontWeight.bold;
+    }
+
+    return FontWeight.normal;
+  }
 }

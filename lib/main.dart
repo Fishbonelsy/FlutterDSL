@@ -34,8 +34,9 @@ class MyHomePage extends StatelessWidget {
 
     final node = TextNode();
     final attrs = Map<String, String>();
-    attrs['text'] = 'Hello World';
+    attrs['text'] = 'Hello World3';
     attrs['textSize'] = '16.0';
+    attrs['textColor'] = '#00FF00';
     attrs['width'] = '100.0';
     attrs['height'] = '100.0';
     attrs['backgroundColor'] = '0xFFFF0000';
