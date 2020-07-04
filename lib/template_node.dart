@@ -57,10 +57,78 @@ class Attr {
   String value;
 }
 
+class FlexNode extends TemplateNode {
+  @override
+  Widget internalBuild() {
+    final childrenWidget = <Widget>[];
+    children
+        .map((TemplateNode node) => childrenWidget.add(node.internalBuild()));
+    return isVertical
+        ? Column(
+            children: childrenWidget,
+            mainAxisAlignment: mainAxisAlignment,
+            crossAxisAlignment: crossAxisAlignment,
+          )
+        : Row(
+            children: childrenWidget,
+            mainAxisAlignment: mainAxisAlignment,
+            crossAxisAlignment: crossAxisAlignment,
+          );
+  }
+
+  bool get isVertical => getAttr('flexDirection') ?? 'column' == 'column';
+
+  MainAxisAlignment get mainAxisAlignment {
+    MainAxisAlignment alignment = MainAxisAlignment.start;
+    final attrStr = getAttr('justifyContent');
+    switch (attrStr) {
+      case 'flex-start':
+        alignment = MainAxisAlignment.start;
+        break;
+      case 'flex-end':
+        alignment = MainAxisAlignment.end;
+        break;
+      case 'center':
+        alignment = MainAxisAlignment.center;
+        break;
+      case 'space-between':
+        alignment = MainAxisAlignment.spaceBetween;
+        break;
+      case 'space-around':
+        alignment = MainAxisAlignment.spaceAround;
+        break;
+    }
+    return alignment;
+  }
+
+  CrossAxisAlignment get crossAxisAlignment {
+    CrossAxisAlignment alignment = CrossAxisAlignment.start;
+    final attrStr = getAttr('justifyContent');
+    switch (attrStr) {
+      case 'flex-start':
+        alignment = CrossAxisAlignment.start;
+        break;
+      case 'flex-end':
+        alignment = CrossAxisAlignment.end;
+        break;
+      case 'center':
+        alignment = CrossAxisAlignment.center;
+        break;
+      case 'baseline':
+        alignment = CrossAxisAlignment.baseline;
+        break;
+      case 'stretch':
+        alignment = CrossAxisAlignment.stretch;
+        break;
+    }
+    return alignment;
+  }
+}
+
 class TextNode extends TemplateNode {
   @override
   Widget internalBuild() {
-    Widget child = Text(
+    return Text(
       text,
       maxLines: maxLines,
       style: TextStyle(
@@ -70,7 +138,6 @@ class TextNode extends TemplateNode {
         fontWeight: fontWeight,
       ),
     );
-    return child;
   }
 
   String get text => getAttr('text') ?? '';
@@ -95,4 +162,13 @@ class TextNode extends TemplateNode {
 
     return FontWeight.normal;
   }
+}
+
+class ImageNode extends TemplateNode {
+  @override
+  Widget internalBuild() {
+    return Image.network(src);
+  }
+
+  String get src => getAttr('url') ?? '';
 }
