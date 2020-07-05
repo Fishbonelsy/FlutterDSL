@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dsl_demo/template_node_parser.dart';
+import 'package:xml/xml.dart';
 
 import 'template_node.dart';
 
@@ -28,25 +30,34 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
+    final bookshelfXml = '''<Flex>
+    <Image
+        height="32"
+        width="32"
+        url="https://static.yximgs.com/udata/pkg/kwai-client-image/feed_cover_tag_picture_normal.png"
+        actualImageScaleType="centerCrop" />
+ 
+    <Text
+        height="40"
+        verticalGravity="center"
+        textColor="#ff8822"
+        textSize="20"
+        text="Hello, world!"/>
+</Flex>''';
 
-    final node = TextNode();
-    final attrs = Map<String, String>();
-    attrs['text'] = 'Hello World3';
-    attrs['textSize'] = '16.0';
-    attrs['textColor'] = '#00FF00';
-    attrs['width'] = '100.0';
-    attrs['height'] = '100.0';
-    attrs['backgroundColor'] = '0xFFFF0000';
-    node.attrsMap = attrs;
+    final nodeParser = TemplateNodeParser();
+    final nodeList = parse(bookshelfXml).children;
+    final myNodeList = nodeList.map((element) {
+      return nodeParser.parse(element);
+    }).toList();
 
-
+    final newNode = myNodeList.first ?? EmptyNode();
+    final widget = newNode.build();
     return Container(
-      color: Colors.white,
-      alignment: Alignment.center,
-      child: node.build()
-    );
+        color: Colors.white,
+        alignment: Alignment.center,
+        child: widget);
   }
 }

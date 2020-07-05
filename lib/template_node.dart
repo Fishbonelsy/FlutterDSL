@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 abstract class TemplateNode {
-  NodeType nodeType;
   Map<String, String> attrsMap = Map<String, String>();
   List<TemplateNode> children;
 
@@ -10,6 +9,10 @@ abstract class TemplateNode {
 
   String getAttr(String name) {
     return attrsMap[name];
+  }
+  
+  void setAttr(String key, String value) {
+    attrsMap[key] = value;
   }
 
   bool hasContainer() {
@@ -46,12 +49,6 @@ abstract class TemplateNode {
   }
 }
 
-enum NodeType {
-  Flex,
-  Text,
-  Image,
-}
-
 class Attr {
   String name;
   String value;
@@ -61,8 +58,9 @@ class FlexNode extends TemplateNode {
   @override
   Widget internalBuild() {
     final childrenWidget = <Widget>[];
-    children
-        .map((TemplateNode node) => childrenWidget.add(node.internalBuild()));
+    children.forEach((node){
+      childrenWidget.add(node.internalBuild());
+    });
     return isVertical
         ? Column(
             children: childrenWidget,
@@ -171,4 +169,12 @@ class ImageNode extends TemplateNode {
   }
 
   String get src => getAttr('url') ?? '';
+}
+
+class EmptyNode extends TemplateNode {
+  @override
+  Widget internalBuild() {
+    return Container();
+  }
+
 }
