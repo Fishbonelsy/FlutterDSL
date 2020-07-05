@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
 class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final bookshelfXml = '''<Flex>
+    final xmlForTest = '''<Flex>
     <Image
         height="32"
         width="32"
@@ -48,7 +48,7 @@ class MyHomePage extends StatelessWidget {
 </Flex>''';
 
     final nodeParser = TemplateNodeParser();
-    final nodeList = parse(bookshelfXml).children;
+    final nodeList = parse(xmlForTest).children;
     final myNodeList = nodeList.map((element) {
       return nodeParser.parse(element);
     }).toList();
@@ -56,8 +56,6 @@ class MyHomePage extends StatelessWidget {
     final newNode = myNodeList.first ?? EmptyNode();
     final widget = newNode.build();
     return Container(
-        color: Colors.white,
-        alignment: Alignment.center,
-        child: widget);
+        color: Colors.white, alignment: Alignment.center, child: widget);
   }
 }
