@@ -10,7 +10,7 @@ abstract class TemplateNode {
   String getAttr(String name) {
     return attrsMap[name];
   }
-  
+
   void setAttr(String key, String value) {
     attrsMap[key] = value;
   }
@@ -58,8 +58,8 @@ class FlexNode extends TemplateNode {
   @override
   Widget internalBuild() {
     final childrenWidget = <Widget>[];
-    children.forEach((node){
-      childrenWidget.add(node.internalBuild());
+    children.forEach((node) {
+      childrenWidget.add(node.build());
     });
     return isVertical
         ? Column(
@@ -74,7 +74,7 @@ class FlexNode extends TemplateNode {
           );
   }
 
-  bool get isVertical => getAttr('flexDirection') ?? 'column' == 'column';
+  bool get isVertical => (getAttr('flexDirection') ?? 'column') == 'column';
 
   MainAxisAlignment get mainAxisAlignment {
     MainAxisAlignment alignment = MainAxisAlignment.start;
@@ -121,6 +121,44 @@ class FlexNode extends TemplateNode {
     }
     return alignment;
   }
+}
+
+class StackNode extends TemplateNode {
+  @override
+  Widget internalBuild() {
+    final childrenWidget = <Widget>[];
+    children.forEach((node) {
+      childrenWidget.add(Positioned(
+        left: positionLeft,
+        top: positionTop,
+        right: positionRight,
+        bottom: positionBottom,
+        child: node.build(),
+      ));
+    });
+    return Stack(
+      children: childrenWidget,
+    );
+  }
+
+  bool get isAbsolutePosition =>
+      getAttr('positionType') ?? 'relative' == 'absolute';
+
+  double get positionLeft => getAttr('positionLeft') != null
+      ? double.parse(getAttr('positionLeft'))
+      : null;
+
+  double get positionTop => getAttr('positionTop') != null
+      ? double.parse(getAttr('positionTop'))
+      : null;
+
+  double get positionRight => getAttr('positionRight') != null
+      ? double.parse(getAttr('positionRight'))
+      : null;
+
+  double get positionBottom => getAttr('positionBottom') != null
+      ? double.parse(getAttr('positionBottom'))
+      : null;
 }
 
 class TextNode extends TemplateNode {
@@ -176,5 +214,4 @@ class EmptyNode extends TemplateNode {
   Widget internalBuild() {
     return Container();
   }
-
 }

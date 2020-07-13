@@ -32,28 +32,43 @@ class MyApp extends StatelessWidget {
 class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final xmlForTest = '''<Flex>
-    <Image
-        height="32"
-        width="32"
-        url="https://static.yximgs.com/udata/pkg/kwai-client-image/feed_cover_tag_picture_normal.png"
-        actualImageScaleType="centerCrop" />
- 
-    <Text
-        height="40"
-        verticalGravity="center"
-        textColor="#ff8822"
-        textSize="20"
-        text="Hello, world!"/>
-</Flex>''';
+    final xmlForTest = '''
+   <Flex
+   flexDirection="row">
+      <Flex>
+        <Text
+          verticalGravity="center"
+          textColor="#3D4E5C"
+          textSize="28"
+          height="50"
+          text="作品推广"/>
+   
+        <Text
+          verticalGravity="center"
+          textColor="#96A0A9"
+          textSize="24"
+          text="助力作品上热门"/>
+       </Flex>
+       <Image
+       width="100"
+       height="100"
+        url="https://upload.jianshu.io/admin_banners/web_images/4989/7aee9b231d11e9ba92248e65e8f407343f87376e.png?imageMogr2/auto-orient/strip|imageView2/1/w/1250/h/540">
+       </Image>
+       </Flex>
+''';
 
     final nodeParser = TemplateNodeParser();
     final nodeList = parse(xmlForTest).children;
     final myNodeList = nodeList.map((element) {
-      return nodeParser.parse(element);
+      if (element is XmlElement) {
+        return nodeParser.parse(element);
+      } else {
+        return null;
+      }
     }).toList();
 
-    final newNode = myNodeList.first ?? EmptyNode();
+    final newNode =
+        myNodeList.firstWhere((element) => element != null) ?? EmptyNode();
     final widget = newNode.build();
     return Container(
         color: Colors.white, alignment: Alignment.center, child: widget);
