@@ -29,12 +29,33 @@ abstract class TemplateNode {
   double get height =>
       getAttr('height') != null ? double.parse(getAttr('height')) : null;
 
-  Color get backgroundColor => getAttr('backgroundColor') != null
-      ? Color(int.parse(getAttr('backgroundColor')))
-      : Colors.white;
+  Color get backgroundColor {
+    final attrStr = getAttr('backgroundColor') ?? '#FFFFFF';
+    final prefix = attrStr.length == 7 ? '0xFF' : '0x';
+    final colorStr = prefix + attrStr.substring(1, attrStr.length);
+    return Color(int.parse(colorStr));
+  }
 
   Alignment get alignment =>
       getAttr('alignment') != null ? Alignment.center : Alignment.topLeft;
+
+  String get positionType => getAttr('positionType') ?? 'relative';
+
+  double get positionLeft => getAttr('positionLeft') != null
+      ? double.parse(getAttr('positionLeft'))
+      : null;
+
+  double get positionTop => getAttr('positionTop') != null
+      ? double.parse(getAttr('positionTop'))
+      : null;
+
+  double get positionRight => getAttr('positionRight') != null
+      ? double.parse(getAttr('positionRight'))
+      : null;
+
+  double get positionBottom => getAttr('positionBottom') != null
+      ? double.parse(getAttr('positionBottom'))
+      : null;
 
   Widget build() {
     Widget widget = hasContainer()
@@ -57,21 +78,42 @@ class Attr {
 class FlexNode extends TemplateNode {
   @override
   Widget internalBuild() {
-    final childrenWidget = <Widget>[];
+    final innerChildrenWidget = <Widget>[];
+    final outsideChildrenWidget = <Widget>[];
     children.forEach((node) {
-      childrenWidget.add(node.build());
+      if (node.positionType == 'relative') {
+        innerChildrenWidget.add(node.build());
+      } else if (node.positionType == 'absolute') {
+        outsideChildrenWidget.add(Positioned(
+          child: node.build(),
+          left: node.positionLeft,
+          top: node.positionTop,
+          right: node.positionRight,
+          bottom: node.positionBottom,
+        ));
+      }
     });
-    return isVertical
+    final relativeWidget = isVertical
         ? Column(
-            children: childrenWidget,
+            children: innerChildrenWidget,
             mainAxisAlignment: mainAxisAlignment,
             crossAxisAlignment: crossAxisAlignment,
           )
         : Row(
-            children: childrenWidget,
+            children: innerChildrenWidget,
             mainAxisAlignment: mainAxisAlignment,
             crossAxisAlignment: crossAxisAlignment,
           );
+    if (outsideChildrenWidget.isNotEmpty) {
+      if (relativeWidget.children.isNotEmpty) {
+        outsideChildrenWidget.insert(0, relativeWidget);
+      }
+      return Stack(
+        children: outsideChildrenWidget,
+      );
+    } else {
+      return relativeWidget;
+    }
   }
 
   bool get isVertical => (getAttr('flexDirection') ?? 'column') == 'column';
@@ -121,44 +163,6 @@ class FlexNode extends TemplateNode {
     }
     return alignment;
   }
-}
-
-class StackNode extends TemplateNode {
-  @override
-  Widget internalBuild() {
-    final childrenWidget = <Widget>[];
-    children.forEach((node) {
-      childrenWidget.add(Positioned(
-        left: positionLeft,
-        top: positionTop,
-        right: positionRight,
-        bottom: positionBottom,
-        child: node.build(),
-      ));
-    });
-    return Stack(
-      children: childrenWidget,
-    );
-  }
-
-  bool get isAbsolutePosition =>
-      getAttr('positionType') ?? 'relative' == 'absolute';
-
-  double get positionLeft => getAttr('positionLeft') != null
-      ? double.parse(getAttr('positionLeft'))
-      : null;
-
-  double get positionTop => getAttr('positionTop') != null
-      ? double.parse(getAttr('positionTop'))
-      : null;
-
-  double get positionRight => getAttr('positionRight') != null
-      ? double.parse(getAttr('positionRight'))
-      : null;
-
-  double get positionBottom => getAttr('positionBottom') != null
-      ? double.parse(getAttr('positionBottom'))
-      : null;
 }
 
 class TextNode extends TemplateNode {

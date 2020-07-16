@@ -49,9 +49,6 @@ class TemplateNodeFactory {
       case 'Flex':
         node = FlexNode();
         break;
-      case 'Stack':
-        node = StackNode();
-        break;
       case 'Text':
         node = TextNode();
         break;

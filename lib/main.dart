@@ -33,28 +33,34 @@ class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final xmlForTest = '''
-   <Flex
-   flexDirection="row">
-      <Flex>
+   <Flex>
+      <Image
+        width="100"
+        height="100"
+        url="https://upload.jianshu.io/admin_banners/web_images/4989/7aee9b231d11e9ba92248e65e8f407343f87376e.png?imageMogr2/auto-orient/strip|imageView2/1/w/1250/h/540"
+        positionType="absolute"
+        positionLeft="0"
+        positionRight="0">
+       </Image>
+      <Flex
+        flexDirection="column"
+        positionType="absolute"
+        positionLeft="0"
+        >
         <Text
           verticalGravity="center"
           textColor="#3D4E5C"
           textSize="28"
-          height="50"
           text="作品推广"/>
    
         <Text
           verticalGravity="center"
-          textColor="#96A0A9"
+          textColor="#FF0000"
           textSize="24"
           text="助力作品上热门"/>
        </Flex>
-       <Image
-       width="100"
-       height="100"
-        url="https://upload.jianshu.io/admin_banners/web_images/4989/7aee9b231d11e9ba92248e65e8f407343f87376e.png?imageMogr2/auto-orient/strip|imageView2/1/w/1250/h/540">
-       </Image>
-       </Flex>
+       
+    </Flex>
 ''';
 
     final nodeParser = TemplateNodeParser();
@@ -71,6 +77,6 @@ class MyHomePage extends StatelessWidget {
         myNodeList.firstWhere((element) => element != null) ?? EmptyNode();
     final widget = newNode.build();
     return Container(
-        color: Colors.white, alignment: Alignment.center, child: widget);
+        color: Colors.white,  child: widget);
   }
 }
