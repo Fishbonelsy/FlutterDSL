@@ -33,7 +33,8 @@ class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final xmlForTest = '''
-   <Flex>
+   <Flex
+   paddingTop="40">
       <Image
         width="100"
         height="100"

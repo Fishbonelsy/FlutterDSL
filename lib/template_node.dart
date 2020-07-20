@@ -19,8 +19,14 @@ abstract class TemplateNode {
     return getAttr('backgroundColor') != null ||
         getAttr('width') != null ||
         getAttr('height') != null ||
-        getAttr('padding') != null ||
-        getAttr('margin') != null;
+        getAttr('paddingLeft') != null ||
+        getAttr('paddingTop') != null ||
+        getAttr('paddingRight') != null ||
+        getAttr('paddingBottom') != null ||
+        getAttr('marginLeft') != null ||
+        getAttr('marginTop') != null ||
+        getAttr('marginRight') != null ||
+        getAttr('marginBottom') != null;
   }
 
   double get width =>
@@ -57,12 +63,49 @@ abstract class TemplateNode {
       ? double.parse(getAttr('positionBottom'))
       : null;
 
+  double get marginLeft =>
+      getAttr('marginLeft') != null ? double.parse(getAttr('marginLeft')) : 0;
+
+  double get marginTop =>
+      getAttr('marginTop') != null ? double.parse(getAttr('marginTop')) : 0;
+
+  double get marginRight =>
+      getAttr('marginRight') != null ? double.parse(getAttr('marginRight')) : 0;
+
+  double get marginBottom => getAttr('marginBottom') != null
+      ? double.parse(getAttr('marginBottom'))
+      : 0;
+
+  double get paddingLeft =>
+      getAttr('paddingLeft') != null ? double.parse(getAttr('paddingLeft')) : 0;
+
+  double get paddingTop =>
+      getAttr('paddingTop') != null ? double.parse(getAttr('paddingTop')) : 0;
+
+  double get paddingRight => getAttr('paddingRight') != null
+      ? double.parse(getAttr('paddingRight'))
+      : 0;
+
+  double get paddingBottom => getAttr('paddingBottom') != null
+      ? double.parse(getAttr('paddingBottom'))
+      : 0;
+
   Widget build() {
     Widget widget = hasContainer()
         ? Container(
             width: width,
             height: height,
             color: backgroundColor,
+            margin: EdgeInsets.only(
+                left: marginLeft,
+                top: marginTop,
+                right: marginRight,
+                bottom: marginBottom),
+            padding: EdgeInsets.only(
+                left: paddingLeft,
+                top: paddingTop,
+                right: paddingRight,
+                bottom: paddingBottom),
             child: internalBuild(),
           )
         : internalBuild();
