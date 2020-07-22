@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dsl_demo/template_node_parser.dart';
 import 'package:xml/xml.dart';
 
+import 'invoker.dart';
+import 'template_function_sample.dart';
 import 'template_node.dart';
 
 void main() => runApp(MyApp());
@@ -77,7 +79,18 @@ class MyHomePage extends StatelessWidget {
     final newNode =
         myNodeList.firstWhere((element) => element != null) ?? EmptyNode();
     final widget = newNode.build();
+
+    final invoker = DSLMethodInvoker();
+    final functions = MyTemplateFunction();
+    invoker.registerMethod("test", functions.testPrint);
     return Container(
-        color: Colors.white,  child: widget);
+      color: Colors.white,
+      child: GestureDetector(
+        child: widget,
+        onTap: () {
+          invoker.invoke('test',params: <String,String>{'content':'Hello Invoker'});
+        },
+      ),
+    );
   }
 }
