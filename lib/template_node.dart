@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'invoker.dart';
 
 abstract class TemplateNode {
   Map<String, String> attrsMap = Map<String, String>();
   List<TemplateNode> children;
 
-  Widget internalBuild();
+  Widget internalBuild(DSLMethodInvoker invoker);
 
   String getAttr(String name) {
     return attrsMap[name];
@@ -90,7 +91,9 @@ abstract class TemplateNode {
       ? double.parse(getAttr('paddingBottom'))
       : 0;
 
-  Widget build() {
+  String get action => getAttr('action');
+
+  Widget build(DSLMethodInvoker invoker) {
     Widget widget = hasContainer()
         ? Container(
             width: width,
@@ -106,10 +109,17 @@ abstract class TemplateNode {
                 top: paddingTop,
                 right: paddingRight,
                 bottom: paddingBottom),
-            child: internalBuild(),
+            child: internalBuild(invoker),
           )
-        : internalBuild();
-    return widget;
+        : internalBuild(invoker);
+    return action != null
+        ? GestureDetector(
+            child: widget,
+            onTap: () {
+              invoker?.invoke(action);
+            },
+          )
+        : widget;
   }
 }
 
@@ -120,15 +130,15 @@ class Attr {
 
 class FlexNode extends TemplateNode {
   @override
-  Widget internalBuild() {
+  Widget internalBuild(DSLMethodInvoker invoker) {
     final innerChildrenWidget = <Widget>[];
     final outsideChildrenWidget = <Widget>[];
     children.forEach((node) {
       if (node.positionType == 'relative') {
-        innerChildrenWidget.add(node.build());
+        innerChildrenWidget.add(node.build(invoker));
       } else if (node.positionType == 'absolute') {
         outsideChildrenWidget.add(Positioned(
-          child: node.build(),
+          child: node.build(invoker),
           left: node.positionLeft,
           top: node.positionTop,
           right: node.positionRight,
@@ -210,7 +220,7 @@ class FlexNode extends TemplateNode {
 
 class TextNode extends TemplateNode {
   @override
-  Widget internalBuild() {
+  Widget internalBuild(DSLMethodInvoker invoker) {
     return Text(
       text,
       maxLines: maxLines,
@@ -236,7 +246,7 @@ class TextNode extends TemplateNode {
     final prefix = attrStr.length == 7 ? '0xFF' : '0x';
     final colorStr = prefix + attrStr.substring(1, attrStr.length);
     return Color(int.parse(colorStr));
-  }
+  } 
 
   FontWeight get fontWeight {
     if (getAttr('textStyle') != null && getAttr('textStyle') == 'bold') {
@@ -249,7 +259,7 @@ class TextNode extends TemplateNode {
 
 class ImageNode extends TemplateNode {
   @override
-  Widget internalBuild() {
+  Widget internalBuild(DSLMethodInvoker invoker) {
     return Image.network(src);
   }
 
@@ -258,7 +268,7 @@ class ImageNode extends TemplateNode {
 
 class EmptyNode extends TemplateNode {
   @override
-  Widget internalBuild() {
+  Widget internalBuild(DSLMethodInvoker invoker) {
     return Container();
   }
 }

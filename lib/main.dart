@@ -43,7 +43,8 @@ class MyHomePage extends StatelessWidget {
         url="https://upload.jianshu.io/admin_banners/web_images/4989/7aee9b231d11e9ba92248e65e8f407343f87376e.png?imageMogr2/auto-orient/strip|imageView2/1/w/1250/h/540"
         positionType="absolute"
         positionLeft="0"
-        positionRight="0">
+        positionRight="0"
+        action='test'>
        </Image>
       <Flex
         flexDirection="column"
@@ -78,19 +79,14 @@ class MyHomePage extends StatelessWidget {
 
     final newNode =
         myNodeList.firstWhere((element) => element != null) ?? EmptyNode();
-    final widget = newNode.build();
 
     final invoker = DSLMethodInvoker();
     final functions = MyTemplateFunction();
     invoker.registerMethod("test", functions.testPrint);
+    final widget = newNode.build(invoker);
     return Container(
       color: Colors.white,
-      child: GestureDetector(
-        child: widget,
-        onTap: () {
-          invoker.invoke('test',params: <String,String>{'content':'Hello Invoker'});
-        },
-      ),
+      child: widget,
     );
   }
 }
